@@ -1,0 +1,194 @@
+{
+  "name": "Phase2_send interview slots",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "role"
+            },
+            {
+              "name": "Email-Address"
+            },
+            {
+              "name": "Candidate Status"
+            }
+          ]
+        }
+      },
+      "id": "c055762a-8fe7-4141-a639-df2372f30060",
+      "typeVersion": 1.1,
+      "name": "Phase2_Interview_Scheduling",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        272,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const slots = [];\n\nfor (let day = 1; day <= 3; day++) {\n\n  const baseDate = new Date();\n  baseDate.setDate(baseDate.getDate() + day);\n\n  const dateStr = baseDate.toLocaleDateString('en-GB', {\n    day: '2-digit',\n    month: 'short',\n    year: 'numeric'\n  });\n\n  const times = [\n    '10:00 AM',\n    '2:00 PM',\n    '4:00 PM'\n  ];\n\n  times.forEach(time => {\n    slots.push(`${dateStr} - ${time}`);\n  });\n}\n\nreturn [\n  {\n    json: {\n      slots: slots.join('\\n')\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        352
+      ],
+      "id": "48d8a6b4-44f3-413d-9626-a2b8533b7c17",
+      "name": "Generate Interview Slots"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Phase2_Interview_Scheduling').item.json[\"Email-Address\"] }}",
+        "subject": "=Interview Scheduling - {{ $('Phase2_Interview_Scheduling').item.json[\"role\"] }}",
+        "message": "=<h2>Interview Scheduling</h2>\n\n<p>Hello Candidate,</p>\n\n<p>\nCongratulations! You have been shortlisted for the next interview round for the role of:\n</p>\n\n<h3>\n{{ $('Phase2_Interview_Scheduling').item.json[\"role\"] }}\n</h3>\n\n<p>\nPlease find the available interview slots below:\n</p>\n\n<pre>\n{{ $('Generate Interview Slots').item.json[\"slots\"] }}\n</pre>\n\n<p>\nPlease select your preferred slot using the form below:\n</p>\n\n<p>\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSedKCBfcJB7zvurdUhhVZJL1a3wmDbyDp4nAchsuYuUYldnDA/viewform?usp=dialog\">\nSelect The Slot\n</a>\n</p>\n\n<p>\nRegards,<br>\nHR Team\n</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        880,
+        352
+      ],
+      "id": "e465fe40-7f70-4667-b924-a21f31f79805",
+      "name": "Send Scheduling Email",
+      "webhookId": "eee7ad8a-2ff8-4dc1-b0d8-74a7487258db",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "NSPF3ucbOiiiTsrA",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "12NjKtaHkQEjB2uO3eAwQBp1Rhssajml00ELC6jsEymg",
+          "mode": "list",
+          "cachedResultName": "n8n-HR-Agent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12NjKtaHkQEjB2uO3eAwQBp1Rhssajml00ELC6jsEymg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 916050885,
+          "mode": "list",
+          "cachedResultName": "Booked_Slots",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12NjKtaHkQEjB2uO3eAwQBp1Rhssajml00ELC6jsEymg/edit#gid=916050885"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "email": "={{ $('Phase2_Interview_Scheduling').item.json[\"Email-Address\"] }}",
+            "slot": "={{ $('Generate Interview Slots').item.json[\"slots\"] }}",
+            "timestamp": "={{ $now.format('DD MMM YYYY - hh:mm A') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "slot",
+              "displayName": "slot",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        688,
+        352
+      ],
+      "id": "97ef3269-5431-4fe9-a209-ccb07aaa73a7",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Qm0DqWL7Wg9QgWzw",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Phase2_Interview_Scheduling": {
+      "main": [
+        [
+          {
+            "node": "Generate Interview Slots",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Interview Slots": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Scheduling Email": {
+      "main": [
+        []
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send Scheduling Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "1f7bc458-872d-4270-8858-ee7ed7f9e51a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "75a10e099eba5d7b79cdfb8df99c389848e3c880d74379b3ba322bfd6cbe4570"
+  },
+  "id": "uNiqAdXNoE5vOPXb",
+  "tags": []
+}
