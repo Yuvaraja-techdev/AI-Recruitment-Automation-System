@@ -1,5 +1,29 @@
-/*
-!.gitignore
-!/README.md
-!/screenshots/
-!/workflows/
+# Dependencies
+node_modules/
+.venv/
+venv/
+
+# Caches and temporary files
+__pycache__/
+.pytest_cache/
+*.pyc
+*.pyo
+*.pyd
+.DS_Store
+Thumbs.db
+
+# Build outputs
+dist/
+build/
+
+# Databases and Local Storage
+*.sqlite
+*.db
+data/interview_session.json
+
+# Environment variables and secrets
+.env
+.env.*
+
+# Logs
+*.log

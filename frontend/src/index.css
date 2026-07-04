@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    @apply bg-surface-50 text-surface-800;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  }
+}
+
+@layer components {
+  /* Stat card base */
+  .stat-card {
+    @apply bg-white rounded-2xl p-6 shadow-card transition-all duration-300 ease-out;
+  }
+  .stat-card:hover {
+    @apply shadow-card-hover -translate-y-0.5;
+  }
+
+  /* Sidebar nav item */
+  .nav-item {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200;
+  }
+  .nav-item-active {
+    @apply bg-brand-50 text-brand-700;
+  }
+  .nav-item-inactive {
+    @apply text-surface-500 hover:bg-surface-100 hover:text-surface-700;
+  }
+
+  /* Status badges */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold tracking-wide;
+  }
+  .badge-selected {
+    @apply bg-emerald-50 text-emerald-700 border border-emerald-200;
+  }
+  .badge-rejected {
+    @apply bg-red-50 text-red-700 border border-red-200;
+  }
+  .badge-pending {
+    @apply bg-amber-50 text-amber-700 border border-amber-200;
+  }
+  .badge-screened {
+    @apply bg-blue-50 text-blue-700 border border-blue-200;
+  }
+  .badge-interviewing {
+    @apply bg-indigo-50 text-indigo-700 border border-indigo-200;
+  }
+}
+
+/* Custom scrollbar – light theme */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}

@@ -1,0 +1,17 @@
+fastapi
+uvicorn
+sqlalchemy
+pydantic[email]
+email-validator
+faster-whisper
+google-generativeai
+python-multipart
+python-dotenv
+pyjwt
+requests
+httpx
+pytest
+psycopg2-binary
+
+
+
