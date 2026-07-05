@@ -14,7 +14,8 @@ import {
   AlertCircle,
   TrendingUp,
   BrainCircuit,
-  Filter
+  Filter,
+  Sparkles
 } from 'lucide-react'
 import { v4 as uuidv4 } from 'uuid'
 import { getAllJobs, getCandidateById, applyForJob, getSavedJobs, saveJob, unsaveJob, getJobRecommendations } from '../services/api'
