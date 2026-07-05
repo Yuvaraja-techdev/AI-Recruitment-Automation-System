@@ -32,6 +32,8 @@ import CandidateDashboardPage from './pages/CandidateDashboardPage'
 import CandidateActivityPage from './pages/CandidateActivityPage'
 import CandidateInsightsPage from './pages/CandidateInsightsPage'
 import NotificationsPage from './pages/NotificationsPage'
+import ApplyJobPage from './pages/ApplyJobPage'
+import ApplicationSuccessPage from './pages/ApplicationSuccessPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import InterviewPortal from './pages/InterviewPortal'
 import SystemCheck from './pages/SystemCheck'
@@ -78,6 +80,22 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={['CANDIDATE']}>
               <JobPortalPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/apply/:jobId" 
+          element={
+            <ProtectedRoute allowedRoles={['CANDIDATE']}>
+              <ApplyJobPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/application-success" 
+          element={
+            <ProtectedRoute allowedRoles={['CANDIDATE']}>
+              <ApplicationSuccessPage />
             </ProtectedRoute>
           } 
         />

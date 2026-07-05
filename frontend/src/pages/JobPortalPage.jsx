@@ -16,6 +16,7 @@ import {
   BrainCircuit,
   Filter
 } from 'lucide-react'
+import { v4 as uuidv4 } from 'uuid'
 import { getAllJobs, getCandidateById, applyForJob, getSavedJobs, saveJob, unsaveJob, getJobRecommendations } from '../services/api'
 import LoadingSkeleton from '../components/LoadingSkeleton'
 import JobCard from '../components/JobCard'
@@ -155,18 +156,15 @@ function JobPortalPage() {
       return
     }
     
-    const n8nFormUrl = import.meta.env.VITE_N8N_FORM_URL || 'http://localhost:5678/form/hireflow-apply'
-    const queryParams = new URLSearchParams({
-      role: selectedJob.title || '',
-      job_id: selectedJob.id || '',
-      department: selectedJob.department || 'Engineering',
-      company: selectedJob.company || '',
-      location: selectedJob.location || '',
-      employment_type: selectedJob.employment_type || 'Full-time'
-    }).toString()
-
-    const redirectUrl = `${n8nFormUrl}?${queryParams}`
-    window.open(redirectUrl, '_blank')
+    const applicationId = uuidv4()
+    navigate(`/apply/${selectedJob.id}`, {
+      state: {
+        jobId: selectedJob.id,
+        jobTitle: selectedJob.title,
+        candidateId: candidateProfile.candidate_id,
+        applicationId: applicationId
+      }
+    })
     setSelectedJob(null)
   }
 
