@@ -201,7 +201,7 @@ def seed_default_jobs():
                 print("Successfully seeded 4 default positions.")
             
             # 2. Seed 97 additional job roles from jobs_data.py
-            from data.jobs_data import JOBS_DATA
+            from jobs_data import JOBS_DATA
             
             existing_jobs = {j[0] for j in db.query(models.Job.title).all()}
             new_jobs = []
