@@ -150,6 +150,7 @@ def seed_default_jobs():
         from database import SessionLocal
         db = SessionLocal()
         try:
+            # 1. Seed original 4 default positions if table is completely empty
             job_count = db.query(models.Job).count()
             if job_count == 0:
                 print("Seeding default tech jobs into the jobs table...")
@@ -198,6 +199,59 @@ def seed_default_jobs():
                 db.add_all(default_jobs)
                 db.commit()
                 print("Successfully seeded 4 default positions.")
+            
+            # 2. Seed 97 additional job roles from jobs_data.py
+            from data.jobs_data import JOBS_DATA
+            
+            existing_jobs = {j[0] for j in db.query(models.Job.title).all()}
+            new_jobs = []
+            
+            for job in JOBS_DATA:
+                title = job["role"]
+                if title not in existing_jobs:
+                    # Parse skills list
+                    skills = [s.strip() for s in job["required_skills"].split(",")]
+                    
+                    # Deduce experience level based on title
+                    title_lower = title.lower()
+                    if "intern" in title_lower or "trainee" in title_lower:
+                        experience = "Entry"
+                        emp_type = "Internship"
+                        salary = "$40k - $60k"
+                    elif "senior" in title_lower or "lead" in title_lower or "architect" in title_lower:
+                        experience = "Senior"
+                        emp_type = "Full-time"
+                        salary = "$140k - $185k"
+                    else:
+                        experience = "Mid"
+                        emp_type = "Full-time"
+                        salary = "$95k - $130k"
+                        
+                    # Create requirements template
+                    skills_str = ", ".join(skills[:3])
+                    reqs = f"• Professional experience working with {skills_str}.\n• Strong problem solving skills and software engineering practices.\n• Ability to collaborate effectively in cross-functional team workflows."
+                    
+                    new_jobs.append(
+                        models.Job(
+                            title=title,
+                            company="HireFlow Solutions",
+                            location="Remote",
+                            experience=experience,
+                            salary=salary,
+                            description=job["job_description"],
+                            requirements=reqs,
+                            skills=skills,
+                            employment_type=emp_type,
+                            work_mode="Remote",
+                            status="Published"
+                        )
+                    )
+            
+            if new_jobs:
+                db.add_all(new_jobs)
+                db.commit()
+                print(f"Successfully seeded {len(new_jobs)} additional job roles.")
+                
         except Exception as e:
             print(f"Error seeding jobs: {e}")
             db.rollback()
