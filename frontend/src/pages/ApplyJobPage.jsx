@@ -53,8 +53,11 @@ function ApplyJobPage() {
   const [flagged, setFlagged] = useState({})
   const [timeWarningsShown, setTimeWarningsShown] = useState({ fiveMin: false, oneMin: false })
   const [isOnline, setIsOnline] = useState(navigator.onLine)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const answersRef = useRef({})
+  const questionTimesRef = useRef({})
+
   useEffect(() => {
     answersRef.current = answers
   }, [answers])
@@ -83,6 +86,7 @@ function ApplyJobPage() {
     localStorage.removeItem('hireflow_active_candidate_id')
     localStorage.removeItem('hireflow_active_job_title')
     localStorage.removeItem('hireflow_active_question_index')
+    localStorage.removeItem('hireflow_question_times')
     
     // Clear Part 2 variables
     if (assessmentData) {
@@ -142,6 +146,12 @@ function ApplyJobPage() {
           const savedFlagged = localStorage.getItem('hireflow_flagged')
           if (savedFlagged) {
             setFlagged(JSON.parse(savedFlagged))
+          }
+
+          // Load question times
+          const savedTimes = localStorage.getItem('hireflow_question_times')
+          if (savedTimes) {
+            questionTimesRef.current = JSON.parse(savedTimes)
           }
 
           // Calculate remaining time if in ASSESSMENT state
@@ -302,7 +312,7 @@ function ApplyJobPage() {
             message: ""
           })
           // Auto submit due to system termination
-          submitTestAnswers(true, 'TERMINATED_BY_SYSTEM')
+          handleSubmitAssessment(true, 'TERMINATED_BY_SYSTEM')
         }
         return nextCount
       })
@@ -390,6 +400,8 @@ function ApplyJobPage() {
 
     const assessmentKey = `hireflow_test_${assessmentData.assessment_id || assessmentData.application_id}`
     
+    let timerInterval;
+
     const updateTimer = () => {
       const storedEndTime = localStorage.getItem(`${assessmentKey}_end_time`)
       if (!storedEndTime) return
@@ -401,18 +413,42 @@ function ApplyJobPage() {
       setTimeLeft(diff)
       
       if (diff <= 0) {
-        clearInterval(timerInterval)
+        if (timerInterval) {
+          clearInterval(timerInterval)
+        }
         handleAutoSubmit()
       }
     }
 
+    timerInterval = setInterval(updateTimer, 1000)
+
     // Initial check
     updateTimer()
 
-    const timerInterval = setInterval(updateTimer, 1000)
-
     return () => clearInterval(timerInterval)
   }, [flowState, assessmentData])
+
+  // Track time spent per question
+  useEffect(() => {
+    if (flowState !== 'ASSESSMENT' || !assessmentData) return
+
+    const questions = shuffledQuestions.length > 0 ? shuffledQuestions : (assessmentData?.assessment?.questions || assessmentData?.questions || [])
+    if (questions.length === 0) return
+
+    const activeQuestion = questions[activeQuestionIndex]
+    if (!activeQuestion) return
+    const activeQId = activeQuestion.question_id || activeQuestion.id
+
+    const timer = setInterval(() => {
+      if (!questionTimesRef.current[activeQId]) {
+        questionTimesRef.current[activeQId] = 0
+      }
+      questionTimesRef.current[activeQId] += 1
+      localStorage.setItem('hireflow_question_times', JSON.stringify(questionTimesRef.current))
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [flowState, assessmentData, activeQuestionIndex, shuffledQuestions])
 
   // Handle Resume Upload selection
   const handleFileChange = (e) => {
@@ -491,7 +527,7 @@ function ApplyJobPage() {
 
   // Handle auto-submitting the test when the timer expires
   const handleAutoSubmit = () => {
-    submitTestAnswers(true)
+    handleSubmitAssessment(true)
   }
 
   const startAssessment = () => {
@@ -629,10 +665,16 @@ function ApplyJobPage() {
   }
 
   // Post Answers JSON payload to n8n submit-test Webhook
-  const submitTestAnswers = async (isAuto = false, cheatTerminated = null) => {
+  const handleSubmitAssessment = async (isAuto = false, cheatTerminated = null) => {
+    if (isSubmitting) return
+    setIsSubmitting(true)
+
     if (!isAuto && !cheatTerminated) {
-      const confirmSubmit = window.confirm("Are you sure you want to submit your assessment? You won't be able to edit your answers after submission.")
-      if (!confirmSubmit) return
+      const confirmSubmit = window.confirm("Are you sure you want to submit your assessment? After submission you cannot edit your answers.")
+      if (!confirmSubmit) {
+        setIsSubmitting(false)
+        return
+      }
     }
 
     setFlowState('SUBMITTING')
@@ -649,25 +691,19 @@ function ApplyJobPage() {
       ? shuffledQuestions
       : (assessmentData?.assessment?.questions || assessmentData?.questions || [])
 
-    // Helper to map MCQ option key back to standard Option format
-    const keyToAnswer = (key, question) => {
-      if (!key) return ""
-      if (question.type === 'mcq') {
-        return `Option ${key.toUpperCase()}`
-      }
-      return key
-    }
-
     // Format list questions to include full metadata and answers
     const listAnswers = questionsList.map((q) => {
       const qId = q.question_id || q.id
       const answerVal = answersRef.current[qId] !== undefined ? answersRef.current[qId] : ""
+      const timeSpent = questionTimesRef.current[qId] || 0
       return {
         question_id: qId,
         question: q.question || "",
         difficulty: q.difficulty || "easy",
         type: q.type || "mcq",
-        answer: keyToAnswer(answerVal, q)
+        selected_answer: answerVal,
+        answer: answerVal,
+        time_spent: timeSpent
       }
     })
 
@@ -693,6 +729,7 @@ function ApplyJobPage() {
       candidate_name: targetCandidateName,
       submitted_at: new Date().toISOString(),
       time_taken: Math.max(0, 1200 - timeLeft),
+      auto_submitted: isAuto,
       assessment_created_at: assessmentData?.created_at || new Date(Date.now() - 1000 * 60).toISOString(),
       assessment_started_at: startedAt,
       assessment_ends_at: endsAt,
@@ -701,16 +738,29 @@ function ApplyJobPage() {
     }
 
     try {
-      await axios.post(testUrl, payload, {
+      const res = await axios.post(testUrl, payload, {
         headers: {
           'Content-Type': 'application/json'
         }
       })
-      setFlowState('SUCCESS')
+
+      const responseStatus = res.data?.status || (res.status === 200 ? "SUCCESS" : "ERROR")
+
+      if (responseStatus === "SUCCESS" || responseStatus === "success") {
+        clearSession()
+        setFlowState('SUCCESS')
+      } else {
+        const errorDetail = res.data?.message || 'Failed to submit technical assessment to server. Please try again.'
+        setErrorMsg(errorDetail)
+        setFlowState('ASSESSMENT')
+        setIsSubmitting(false)
+      }
     } catch (err) {
       console.error('Test Submission Error:', err)
-      setErrorMsg('Failed to submit technical assessment to server. Please try again.')
+      const errorMsgText = err.response?.data?.message || err.message || 'Failed to submit technical assessment to server. Please try again.'
+      setErrorMsg(errorMsgText)
       setFlowState('ASSESSMENT')
+      setIsSubmitting(false)
     }
   }
 
@@ -1324,6 +1374,19 @@ function ApplyJobPage() {
                 })}
               </div>
 
+              {/* Submit Action */}
+              <div className="border-t border-slate-100 pt-4">
+                <button
+                  type="button"
+                  disabled={isSubmitting}
+                  onClick={() => handleSubmitAssessment(false)}
+                  className="w-full bg-indigo-600 hover:bg-indigo-750 text-white font-extrabold py-3.5 rounded-2xl text-xs flex items-center justify-center gap-2 transition-all shadow-md shadow-indigo-100 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? 'Submitting...' : 'SUBMIT ASSESSMENT'}
+                  <CheckCircle2 className="w-4.5 h-4.5" />
+                </button>
+              </div>
+
               {/* Palette Legend */}
               <div className="border-t border-slate-100 pt-4 space-y-2.5">
                 <span className="text-[9px] text-slate-450 font-bold uppercase tracking-wider block">Legend</span>
@@ -1345,18 +1408,6 @@ function ApplyJobPage() {
                     <span>Flagged / Starred Question</span>
                   </div>
                 </div>
-              </div>
-
-              {/* Submit Action */}
-              <div className="border-t border-slate-100 pt-4">
-                <button
-                  type="button"
-                  onClick={() => submitTestAnswers(false)}
-                  className="w-full bg-indigo-655 hover:bg-indigo-750 text-white font-extrabold py-3.5 rounded-2xl text-xs flex items-center justify-center gap-2 transition-all shadow-md shadow-indigo-100 active:scale-[0.98]"
-                >
-                  Submit Assessment
-                  <CheckCircle2 className="w-4.5 h-4.5" />
-                </button>
               </div>
             </div>
           </div>
@@ -1393,7 +1444,7 @@ function ApplyJobPage() {
         <div className="w-full max-w-md bg-white border border-slate-150 rounded-3xl p-8 shadow-xl text-center space-y-5">
           <Loader2 className="w-12 h-12 text-indigo-650 animate-spin mx-auto" />
           <div className="space-y-1">
-            <h3 className="text-lg font-extrabold text-slate-800 font-display">Submitting Assessment</h3>
+            <h3 className="text-lg font-extrabold text-slate-800 font-display">Submitting Assessment...</h3>
             <p className="text-xs text-slate-450">Packaging your responses and finalizing candidate entry...</p>
           </div>
         </div>
