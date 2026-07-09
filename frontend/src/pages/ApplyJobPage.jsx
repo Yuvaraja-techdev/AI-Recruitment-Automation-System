@@ -87,6 +87,7 @@ function ApplyJobPage() {
     localStorage.removeItem('hireflow_active_job_title')
     localStorage.removeItem('hireflow_active_question_index')
     localStorage.removeItem('hireflow_question_times')
+    localStorage.removeItem('hireflow_active_job_id')
     
     // Clear Part 2 variables
     if (assessmentData) {
@@ -113,8 +114,13 @@ function ApplyJobPage() {
       const savedCandId = localStorage.getItem('hireflow_active_candidate_id')
       const savedJobTitle = localStorage.getItem('hireflow_active_job_title')
       const savedActiveIdx = localStorage.getItem('hireflow_active_question_index')
+      const savedJobId = localStorage.getItem('hireflow_active_job_id')
 
-      if (savedFlowState && savedFlowState !== 'FORM' && savedFlowState !== 'LOADING' && savedAssessmentData) {
+      // Verify that the saved session belongs to the current job and application
+      const isSameJob = savedJobId === jobId
+      const isSameApplication = !location.state?.applicationId || savedAppId === location.state.applicationId
+
+      if (isSameJob && isSameApplication && savedFlowState && savedFlowState !== 'FORM' && savedFlowState !== 'LOADING' && savedAssessmentData) {
         try {
           const parsedData = JSON.parse(savedAssessmentData)
           setAssessmentData(parsedData)
@@ -171,6 +177,9 @@ function ApplyJobPage() {
           console.error('Failed to resume session from localStorage:', e)
           clearSession()
         }
+      } else {
+        // Clear any stale session data from previous jobs/applications
+        clearSession()
       }
       
       // Ensure Application ID exists
@@ -240,7 +249,7 @@ function ApplyJobPage() {
 
   // Auto-save session variables to localStorage on change
   useEffect(() => {
-    if (flowState === 'FORM' || flowState === 'LOADING') {
+    if (flowState === 'FORM' || flowState === 'LOADING' || flowState === 'SUCCESS' || flowState === 'REJECTED') {
       return
     }
     localStorage.setItem('hireflow_flow_state', flowState)
@@ -253,7 +262,8 @@ function ApplyJobPage() {
     localStorage.setItem('hireflow_active_job_title', jobTitle)
     localStorage.setItem('hireflow_active_question_index', activeQuestionIndex.toString())
     localStorage.setItem('hireflow_flagged', JSON.stringify(flagged))
-  }, [flowState, assessmentData, answers, applicationId, candidateId, jobTitle, activeQuestionIndex, flagged])
+    localStorage.setItem('hireflow_active_job_id', jobId)
+  }, [flowState, assessmentData, answers, applicationId, candidateId, jobTitle, activeQuestionIndex, flagged, jobId])
 
   // Online/Offline detection
   useEffect(() => {
