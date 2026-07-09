@@ -22,7 +22,6 @@ import {
 } from 'lucide-react'
 import axios from 'axios'
 import { getJobById, getCandidateById } from '../services/api'
-import { v4 as uuidv4 } from 'uuid'
 
 function ApplyJobPage() {
   const { jobId } = useParams()
@@ -184,7 +183,8 @@ function ApplyJobPage() {
       
       // Ensure Application ID exists
       if (!applicationId) {
-        setApplicationId(uuidv4())
+        const randomNum = Math.floor(100 + Math.random() * 900)
+        setApplicationId(`APP${randomNum}`)
       }
 
       // Ensure Candidate ID exists
@@ -202,6 +202,12 @@ function ApplyJobPage() {
             console.error('Failed to parse user from localStorage', e)
           }
         }
+      }
+      if (!currentCandidateId) {
+        const randomNum = Math.floor(100 + Math.random() * 900)
+        const generatedCandId = `CAND${randomNum}`
+        setCandidateId(generatedCandId)
+        currentCandidateId = generatedCandId
       }
 
       // 1. Fetch Job details if title is not passed
@@ -516,8 +522,33 @@ function ApplyJobPage() {
       if (payload?.status === 'REJECTED') {
         setFlowState('REJECTED')
       } else if (payload?.status === 'SELECTED') {
-        // Hydrate questions list
-        setAssessmentData(payload)
+        // Hydrate questions list & resolve returned IDs
+        const finalCandidateId = payload.candidate_id || candidateId
+        const finalApplicationId = payload.application_id || applicationId
+        
+        setCandidateId(finalCandidateId)
+        setApplicationId(finalApplicationId)
+        
+        // Update user state if candidate_id is returned
+        if (payload.candidate_id) {
+          const userStr = localStorage.getItem('user')
+          if (userStr) {
+            try {
+              const parsedUser = JSON.parse(userStr)
+              parsedUser.candidate_id = payload.candidate_id
+              localStorage.setItem('user', JSON.stringify(parsedUser))
+            } catch (e) {
+              console.error("Error updating user candidate_id", e)
+            }
+          }
+        }
+
+        const updatedPayload = {
+          ...payload,
+          candidate_id: finalCandidateId,
+          application_id: finalApplicationId
+        }
+        setAssessmentData(updatedPayload)
         setFlowState('SHORTLIST')
       } else {
         // Fallback to success page if response structure does not match
@@ -694,7 +725,28 @@ function ApplyJobPage() {
     const targetCandidateId = assessmentData?.candidate_id || candidateId
     const targetApplicationId = assessmentData?.application_id || applicationId
     const targetRole = assessmentData?.role || jobTitle
-    const targetCandidateName = assessmentData?.candidate_name || register('name').value || "Candidate"
+    
+    // Safely resolve email
+    let targetEmail = assessmentData?.email
+    if (!targetEmail) {
+      try {
+        const userObj = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null
+        targetEmail = userObj?.email || ""
+      } catch (e) {
+        targetEmail = ""
+      }
+    }
+
+    // Safely resolve candidate name
+    let targetCandidateName = assessmentData?.candidate_name
+    if (!targetCandidateName) {
+      try {
+        const userObj = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null
+        targetCandidateName = userObj?.name || "Candidate"
+      } catch (e) {
+        targetCandidateName = "Candidate"
+      }
+    }
 
     // Extract questions list safely (using shuffled if available)
     const questionsList = shuffledQuestions.length > 0
@@ -731,20 +783,23 @@ function ApplyJobPage() {
     const endsAt = storedEndTime ? new Date(parseInt(storedEndTime, 10)).toISOString() : new Date().toISOString()
 
     const payload = {
-      assessment_id: assessmentData?.assessment_id || "ASM_UNKNOWN",
-      assessment_token: assessmentData?.assessment_token || "",
       candidate_id: targetCandidateId,
       application_id: targetApplicationId,
-      role: targetRole,
       candidate_name: targetCandidateName,
+      email: targetEmail,
+      role: targetRole,
+      answers: listAnswers,
       submitted_at: new Date().toISOString(),
       time_taken: Math.max(0, 1200 - timeLeft),
+      
+      // Preserve metadata for backward compatibility / existing n8n integrations:
+      assessment_id: assessmentData?.assessment_id || "ASM_UNKNOWN",
+      assessment_token: assessmentData?.assessment_token || "",
       auto_submitted: isAuto,
       assessment_created_at: assessmentData?.created_at || new Date(Date.now() - 1000 * 60).toISOString(),
       assessment_started_at: startedAt,
       assessment_ends_at: endsAt,
-      assessment_status: status,
-      answers: listAnswers
+      assessment_status: status
     }
 
     try {

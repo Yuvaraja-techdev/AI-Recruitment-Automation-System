@@ -17,7 +17,6 @@ import {
   Filter,
   Sparkles
 } from 'lucide-react'
-import { v4 as uuidv4 } from 'uuid'
 import { getAllJobs, getCandidateById, applyForJob, getSavedJobs, saveJob, unsaveJob, getJobRecommendations } from '../services/api'
 import LoadingSkeleton from '../components/LoadingSkeleton'
 import JobCard from '../components/JobCard'
@@ -157,7 +156,8 @@ function JobPortalPage() {
       return
     }
     
-    const applicationId = uuidv4()
+    const randomNum = Math.floor(100 + Math.random() * 900)
+    const applicationId = `APP${randomNum}`
     navigate(`/apply/${selectedJob.id}`, {
       state: {
         jobId: selectedJob.id,
