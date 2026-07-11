@@ -36,6 +36,8 @@ function ApplyJobPage() {
   const [submitting, setSubmitting] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
   const [selectedFile, setSelectedFile] = useState(null)
+  const [jobDetails, setJobDetails] = useState(null)
+  const [candidateProfile, setCandidateProfile] = useState(null)
 
   // AI Assessment states (New Feature)
   const [flowState, setFlowState] = useState('FORM') // 'FORM' | 'LOADING' | 'REJECTED' | 'SHORTLIST' | 'PREPARING' | 'ASSESSMENT' | 'SUBMITTING' | 'SUCCESS'
@@ -87,6 +89,7 @@ function ApplyJobPage() {
     localStorage.removeItem('hireflow_active_question_index')
     localStorage.removeItem('hireflow_question_times')
     localStorage.removeItem('hireflow_active_job_id')
+    localStorage.removeItem('hireflow_candidate_info')
     
     // Clear Part 2 variables
     if (assessmentData) {
@@ -104,6 +107,61 @@ function ApplyJobPage() {
     const loadApplicationData = async () => {
       setLoadingProfile(true)
       setErrorMsg('')
+
+      // 1. Load saved candidate details from localStorage if present
+      const savedInfo = localStorage.getItem('hireflow_candidate_info')
+      if (savedInfo) {
+        try {
+          setCandidateProfile(JSON.parse(savedInfo))
+        } catch (e) {
+          console.error('Failed to parse candidate info:', e)
+        }
+      }
+
+      // 2. Load Job details if jobId is available
+      let loadedJob = null
+      if (jobId) {
+        try {
+          loadedJob = await getJobById(jobId)
+          if (loadedJob) {
+            setJobDetails(loadedJob)
+            if (!jobTitle && loadedJob.title) {
+              setJobTitle(loadedJob.title)
+            }
+          }
+        } catch (err) {
+          console.error('Failed to fetch job details:', err)
+        }
+      }
+
+      // 3. Resolve Candidate ID
+      let currentCandidateId = candidateId || localStorage.getItem('hireflow_active_candidate_id')
+      if (!currentCandidateId) {
+        const userString = localStorage.getItem('user')
+        if (userString) {
+          try {
+            const user = JSON.parse(userString)
+            if (user.candidate_id) {
+              currentCandidateId = user.candidate_id
+            }
+          } catch (e) {
+            console.error('Failed to parse user from localStorage', e)
+          }
+        }
+      }
+
+      // 4. Fetch Candidate profile from database if available
+      let profile = null
+      if (currentCandidateId) {
+        try {
+          profile = await getCandidateById(currentCandidateId)
+          if (profile) {
+            setCandidateProfile(prev => ({ ...profile, ...prev }))
+          }
+        } catch (err) {
+          console.error('Failed to fetch candidate profile:', err)
+        }
+      }
 
       // Try to resume session from localStorage
       const savedFlowState = localStorage.getItem('hireflow_flow_state')
@@ -188,56 +246,25 @@ function ApplyJobPage() {
       }
 
       // Ensure Candidate ID exists
-      let currentCandidateId = candidateId
-      if (!currentCandidateId) {
-        const userString = localStorage.getItem('user')
-        if (userString) {
-          try {
-            const user = JSON.parse(userString)
-            if (user.candidate_id) {
-              currentCandidateId = user.candidate_id
-              setCandidateId(user.candidate_id)
-            }
-          } catch (e) {
-            console.error('Failed to parse user from localStorage', e)
-          }
-        }
-      }
-      if (!currentCandidateId) {
-        const randomNum = Math.floor(100 + Math.random() * 900)
-        const generatedCandId = `CAND${randomNum}`
-        setCandidateId(generatedCandId)
-        currentCandidateId = generatedCandId
-      }
-
-      // 1. Fetch Job details if title is not passed
-      if (!jobTitle && jobId) {
-        try {
-          const job = await getJobById(jobId)
-          if (job && job.title) {
-            setJobTitle(job.title)
-          }
-        } catch (err) {
-          console.error('Failed to fetch job details:', err)
-          setErrorMsg('Failed to fetch job details from backend.')
+      if (!candidateId) {
+        if (currentCandidateId) {
+          setCandidateId(currentCandidateId)
+        } else {
+          const randomNum = Math.floor(100 + Math.random() * 900)
+          const generatedCandId = `CAND${randomNum}`
+          setCandidateId(generatedCandId)
         }
       }
 
-      // 2. Fetch Candidate details to prefill form fields
-      if (currentCandidateId) {
-        try {
-          const profile = await getCandidateById(currentCandidateId)
-          if (profile) {
-            reset({
-              name: profile.name || '',
-              email: profile.email || '',
-              phone: profile.phone_number || '',
-              experience: ''
-            })
-          }
-        } catch (err) {
-          console.error('Failed to fetch candidate profile:', err)
-        }
+      // Prefill candidate details to form fields
+      const activeProfile = profile || (savedInfo ? JSON.parse(savedInfo) : null)
+      if (activeProfile) {
+        reset({
+          name: activeProfile.name || '',
+          email: activeProfile.email || '',
+          phone: activeProfile.phone_number || activeProfile.phone || '',
+          experience: activeProfile.experience || ''
+        })
       }
       
       setLoadingProfile(false)
@@ -493,6 +520,17 @@ function ApplyJobPage() {
     setLoadingStep(0)
     setErrorMsg('')
 
+    // Save candidate inputs to state and localStorage to prevent loss on reload
+    const candidateInfo = {
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      experience: data.experience,
+      resume: selectedFile?.name || ""
+    }
+    setCandidateProfile(candidateInfo)
+    localStorage.setItem('hireflow_candidate_info', JSON.stringify(candidateInfo))
+
     try {
       const webhookUrl = import.meta.env.VITE_N8N_WEBHOOK_URL || 'https://n8n-production-ad84.up.railway.app/webhook/hireflow-apply'
       
@@ -546,7 +584,13 @@ function ApplyJobPage() {
         const updatedPayload = {
           ...payload,
           candidate_id: finalCandidateId,
-          application_id: finalApplicationId
+          application_id: finalApplicationId,
+          candidate_name: data.name,
+          email: data.email,
+          phone: data.phone,
+          experience: data.experience,
+          resume_id: payload.id || "",
+          resume_url: payload.id ? `https://drive.google.com/file/d/${payload.id}/view` : ""
         }
         setAssessmentData(updatedPayload)
         setFlowState('SHORTLIST')
@@ -726,8 +770,8 @@ function ApplyJobPage() {
     const targetApplicationId = assessmentData?.application_id || applicationId
     const targetRole = assessmentData?.role || jobTitle
     
-    // Safely resolve email
-    let targetEmail = assessmentData?.email
+    // Safely resolve email using state fallbacks
+    let targetEmail = assessmentData?.email || candidateProfile?.email
     if (!targetEmail) {
       try {
         const userObj = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null
@@ -737,8 +781,8 @@ function ApplyJobPage() {
       }
     }
 
-    // Safely resolve candidate name
-    let targetCandidateName = assessmentData?.candidate_name
+    // Safely resolve candidate name using state fallbacks
+    let targetCandidateName = assessmentData?.candidate_name || assessmentData?.name || candidateProfile?.name
     if (!targetCandidateName) {
       try {
         const userObj = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null
@@ -747,6 +791,22 @@ function ApplyJobPage() {
         targetCandidateName = "Candidate"
       }
     }
+
+    // Resolve other candidate details
+    const targetPhone = assessmentData?.phone || candidateProfile?.phone_number || candidateProfile?.phone || ""
+    const targetExperience = assessmentData?.experience !== undefined ? assessmentData.experience : (candidateProfile?.experience || 0)
+    
+    // Resolve resume details
+    const targetResumeId = assessmentData?.resume_id || assessmentData?.id || ""
+    const targetResumeUrl = assessmentData?.resume_url || (targetResumeId ? `https://drive.google.com/file/d/${targetResumeId}/view` : "")
+    
+    // Resolve job details
+    const targetJobId = jobId || assessmentData?.job_id || ""
+    const targetJobDescription = jobDetails?.description || assessmentData?.job_description || ""
+    const targetRequiredSkills = jobDetails?.skills || assessmentData?.required_skills || []
+    
+    // Resolve assessment ID
+    const targetAssessmentId = assessmentData?.assessment_id || "ASM001"
 
     // Extract questions list safely (using shuffled if available)
     const questionsList = shuffledQuestions.length > 0
@@ -783,17 +843,24 @@ function ApplyJobPage() {
     const endsAt = storedEndTime ? new Date(parseInt(storedEndTime, 10)).toISOString() : new Date().toISOString()
 
     const payload = {
-      candidate_id: targetCandidateId,
       application_id: targetApplicationId,
+      candidate_id: targetCandidateId,
       candidate_name: targetCandidateName,
       email: targetEmail,
+      phone: targetPhone,
       role: targetRole,
-      answers: listAnswers,
+      experience: targetExperience,
+      resume_id: targetResumeId,
+      resume_url: targetResumeUrl,
+      assessment_id: targetAssessmentId,
+      job_id: targetJobId,
+      job_description: targetJobDescription,
+      required_skills: targetRequiredSkills,
       submitted_at: new Date().toISOString(),
+      answers: listAnswers,
       time_taken: Math.max(0, 1200 - timeLeft),
       
       // Preserve metadata for backward compatibility / existing n8n integrations:
-      assessment_id: assessmentData?.assessment_id || "ASM_UNKNOWN",
       assessment_token: assessmentData?.assessment_token || "",
       auto_submitted: isAuto,
       assessment_created_at: assessmentData?.created_at || new Date(Date.now() - 1000 * 60).toISOString(),
@@ -1569,6 +1636,14 @@ function ApplyJobPage() {
                 <span className="text-slate-800 font-bold">10-15 minutes</span>
               </div>
             </div>
+          </div>
+
+          {/* Email Confirmation & Spam/Junk Notice */}
+          <div className="bg-indigo-50 border border-indigo-100/80 rounded-2xl p-4 text-left flex items-start space-x-3">
+            <Mail className="w-5 h-5 text-indigo-600 flex-shrink-0 mt-0.5" />
+            <p className="text-[11px] text-indigo-700 leading-relaxed">
+              Your assessment has been successfully received by <span className="font-semibold text-indigo-900">hireflow.ai</span>. We will contact you via email shortly. Please monitor your inbox, and remember to check your <span className="font-semibold text-indigo-900">spam/junk folder</span> if you do not receive it.
+            </p>
           </div>
 
           <div className="pt-4 border-t border-slate-100">

@@ -39,6 +39,7 @@ import InterviewPortal from './pages/InterviewPortal'
 import SystemCheck from './pages/SystemCheck'
 import InterviewRoom from './pages/InterviewRoom'
 import NotFoundPage from './pages/NotFoundPage'
+import ThemeSwitcher from './components/ThemeSwitcher'
 
 function App() {
   return (
@@ -199,6 +200,7 @@ function App() {
         {/* Fallback 404 Route */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      <ThemeSwitcher />
     </BrowserRouter>
   )
 }

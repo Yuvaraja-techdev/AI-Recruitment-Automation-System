@@ -73,3 +73,201 @@
 html {
   scroll-behavior: smooth;
 }
+
+/* ──────────────────────────────────────────────
+   THEME STYLING ENGINE (CSS VARIABLES)
+   ────────────────────────────────────────────── */
+
+:root {
+  --theme-bg: #f8fafc;        /* bg-slate-50 / surface-50 */
+  --theme-card-bg: #ffffff;   /* white card background */
+  --theme-text: #0f172a;      /* text-slate-900 / surface-900 */
+  --theme-text-muted: #64748b;/* text-slate-500 */
+  --theme-border: #e2e8f0;    /* border-slate-200 */
+  --theme-navbar-bg: rgba(255, 255, 255, 0.8);
+  --theme-sidebar-bg: #ffffff;
+  --theme-input-bg: #f8fafc;
+}
+
+/* Base Dark class transitions */
+.dark {
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+/* 1. Classic Dark (Indigo/Navy Accent) */
+.dark[data-theme="classic-dark"] {
+  --theme-bg: #0f172a;        /* slate-900 */
+  --theme-card-bg: #1e293b;   /* slate-800 */
+  --theme-text: #f8fafc;      /* slate-50 */
+  --theme-text-muted: #94a3b8;/* slate-400 */
+  --theme-border: #334155;    /* slate-700 */
+  --theme-navbar-bg: rgba(30, 41, 59, 0.8);
+  --theme-sidebar-bg: #1e293b;
+  --theme-input-bg: #0f172a;
+}
+
+/* 2. Midnight Blue */
+.dark[data-theme="midnight"] {
+  --theme-bg: #0b132b;
+  --theme-card-bg: #1c2541;
+  --theme-text: #e0e1dd;
+  --theme-text-muted: #8d99ae;
+  --theme-border: #3a506b;
+  --theme-navbar-bg: rgba(28, 37, 65, 0.85);
+  --theme-sidebar-bg: #1c2541;
+  --theme-input-bg: #0b132b;
+}
+
+/* 3. Charcoal Slate */
+.dark[data-theme="charcoal"] {
+  --theme-bg: #121212;
+  --theme-card-bg: #1e1e1e;
+  --theme-text: #e0e0e0;
+  --theme-text-muted: #a0a0a0;
+  --theme-border: #2d2d2d;
+  --theme-navbar-bg: rgba(30, 30, 30, 0.85);
+  --theme-sidebar-bg: #1e1e1e;
+  --theme-input-bg: #121212;
+}
+
+/* 4. Deep Space (Pure Black) */
+.dark[data-theme="deep-space"] {
+  --theme-bg: #000000;
+  --theme-card-bg: #0d0d0d;
+  --theme-text: #ffffff;
+  --theme-text-muted: #888888;
+  --theme-border: #1a1a1a;
+  --theme-navbar-bg: rgba(13, 13, 13, 0.85);
+  --theme-sidebar-bg: #0d0d0d;
+  --theme-input-bg: #000000;
+}
+
+/* ──────────────────────────────────────────────
+   THEME STYLING OVERRIDES FOR DARK MODE
+   ────────────────────────────────────────────── */
+
+.dark body {
+  background-color: var(--theme-bg) !important;
+  color: var(--theme-text) !important;
+}
+
+/* Background Overrides */
+.dark .bg-slate-50,
+.dark .bg-slate-100,
+.dark .bg-surface-50,
+.dark .bg-gray-50,
+.dark .min-h-screen.bg-slate-50,
+.dark .min-h-screen.bg-surface-50,
+.dark .bg-slate-50\/50,
+.dark .bg-slate-100\/50,
+.dark .bg-slate-50\/30 {
+  background-color: var(--theme-bg) !important;
+}
+
+.dark .bg-white,
+.dark .stat-card,
+.dark .bg-slate-50\/60,
+.dark .bg-indigo-50\/60,
+.dark .bg-slate-50\/40,
+.dark .bg-indigo-50\/40,
+.dark [role="dialog"],
+.dark .bg-slate-50\/80 {
+  background-color: var(--theme-card-bg) !important;
+}
+
+/* Navbar & Sidebar Overrides */
+.dark header,
+.dark nav {
+  background-color: var(--theme-navbar-bg) !important;
+  border-color: var(--theme-border) !important;
+}
+
+.dark aside {
+  background-color: var(--theme-sidebar-bg) !important;
+  border-color: var(--theme-border) !important;
+}
+
+/* Navigation items hover */
+.dark .nav-item-inactive {
+  color: var(--theme-text-muted) !important;
+}
+.dark .nav-item-inactive:hover {
+  background-color: var(--theme-bg) !important;
+  color: var(--theme-text) !important;
+}
+
+/* Text Overrides */
+.dark .text-slate-900,
+.dark .text-slate-800,
+.dark .text-slate-700,
+.dark .text-surface-900,
+.dark .text-slate-850,
+.dark .text-slate-950,
+.dark .text-gray-900,
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6 {
+  color: var(--theme-text) !important;
+}
+
+.dark .text-slate-500,
+.dark .text-slate-600,
+.dark .text-slate-550,
+.dark .text-slate-400,
+.dark .text-slate-450,
+.dark .text-surface-500,
+.dark .text-gray-500 {
+  color: var(--theme-text-muted) !important;
+}
+
+/* Borders */
+.dark .border-slate-100,
+.dark .border-slate-150,
+.dark .border-slate-200,
+.dark .border-slate-200\/80,
+.dark .border-slate-300,
+.dark .border-surface-100,
+.dark .border-surface-200,
+.dark .border-gray-100,
+.dark .border-gray-200 {
+  border-color: var(--theme-border) !important;
+}
+
+/* Form inputs & fields */
+.dark input:not([type="checkbox"]):not([type="radio"]),
+.dark select,
+.dark textarea {
+  background-color: var(--theme-input-bg) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: var(--theme-text-muted) !important;
+  opacity: 0.7;
+}
+
+/* Custom scrollbars thumb */
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.25) !important;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.4) !important;
+}
+
+/* Spin slow animation for theme switcher */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.animate-spin-slow {
+  animation: spin-slow 12s linear infinite;
+}
+

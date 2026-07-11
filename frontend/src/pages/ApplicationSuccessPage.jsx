@@ -10,7 +10,8 @@ import {
   BrainCircuit, 
   Calendar, 
   Gift, 
-  Sparkles 
+  Sparkles,
+  Mail
 } from 'lucide-react'
 
 function ApplicationSuccessPage() {
@@ -162,6 +163,14 @@ function ApplicationSuccessPage() {
               )
             })}
           </div>
+        </div>
+
+        {/* Email Confirmation & Spam Notice */}
+        <div className="w-full mt-6 bg-brand-50 border border-brand-100 rounded-2xl p-4 text-left flex items-start space-x-3">
+          <Mail className="w-5 h-5 text-brand-600 flex-shrink-0 mt-0.5" />
+          <p className="text-[11px] text-brand-700 leading-relaxed">
+            Thank you for visiting <span className="font-semibold text-brand-900">hireflow.ai</span>. Our system has successfully received and is analyzing your profile. Please monitor your inbox, and remember to check your <span className="font-semibold text-brand-900">spam/junk folder</span> if you do not receive our updates.
+          </p>
         </div>
 
         {/* Footer Actions */}

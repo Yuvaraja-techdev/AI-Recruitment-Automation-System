@@ -70,7 +70,7 @@ function JobPortalPage() {
               getJobRecommendations()
             ])
             setCandidateDetails(details)
-            setBookmarks(saved.map(j => j.job_id))
+            setBookmarks(saved.map(j => j.id))
             setRecommendations(recs)
           }
         } catch (e) {
