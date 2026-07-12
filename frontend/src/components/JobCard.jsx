@@ -1,5 +1,5 @@
 import React from 'react'
-import { MapPin, DollarSign, Star, BriefcaseBusiness, Sparkles, Calendar, AlertCircle } from 'lucide-react'
+import { MapPin, IndianRupee, Star, BriefcaseBusiness, Sparkles, Calendar, AlertCircle } from 'lucide-react'
 
 const calculateMatchPct = (jobSkills, candidateSkills) => {
   if (!jobSkills || jobSkills.length === 0) return 80 // baseline
@@ -123,7 +123,7 @@ const JobCard = ({
           <div className="flex flex-col gap-0.5">
             <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wide">Annual Salary</span>
             <span className="flex items-center gap-1 text-slate-700 font-semibold truncate">
-              <DollarSign className="w-3 h-3 text-slate-400 flex-shrink-0" />
+              <IndianRupee className="w-3 h-3 text-slate-400 flex-shrink-0" />
               {job.salary}
             </span>
           </div>

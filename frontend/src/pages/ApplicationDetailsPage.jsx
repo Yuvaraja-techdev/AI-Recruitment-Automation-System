@@ -16,7 +16,7 @@ import {
   Brain,
   BadgeCheck,
   FileText,
-  DollarSign,
+  IndianRupee,
   MapPin,
   ListChecks,
 } from 'lucide-react'
@@ -215,7 +215,7 @@ function ApplicationDetailsPage() {
                 </span>
                 <span>•</span>
                 <span className="flex items-center gap-1">
-                  <DollarSign className="w-3.5 h-3.5" /> {job.salary || 'Competitive'}
+                  <IndianRupee className="w-3.5 h-3.5" /> {job.salary || 'Competitive'}
                 </span>
               </div>
             </div>

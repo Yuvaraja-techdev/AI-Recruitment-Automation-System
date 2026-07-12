@@ -18,7 +18,7 @@ import {
   Award,
   BookOpen,
   MapPin,
-  DollarSign
+  IndianRupee
 } from 'lucide-react'
 import { getCandidateById, updateCandidateProfile, uploadCandidateResume, getResumeHistory, deleteCandidateResume } from '../services/api'
 
@@ -1022,10 +1022,10 @@ function CandidateProfilePage() {
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-surface-450 uppercase tracking-wide">Expected Annual Salary</label>
                 <div className="relative">
-                  <DollarSign className="w-4 h-4 text-surface-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <IndianRupee className="w-4 h-4 text-surface-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                   <input
                     type="text"
-                    placeholder="e.g. $120k - $140k"
+                    placeholder="e.g. ₹10 - ₹12 LPA"
                     value={expectedSalary}
                     onChange={(e) => setExpectedSalary(e.target.value)}
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2.5 text-xs text-surface-800 focus:bg-white focus:outline-none focus:border-brand-500 transition-all"

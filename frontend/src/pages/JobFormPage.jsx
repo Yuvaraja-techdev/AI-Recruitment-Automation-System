@@ -4,7 +4,7 @@ import {
   ArrowLeft,
   Briefcase,
   MapPin,
-  DollarSign,
+  IndianRupee,
   Plus,
   X,
   Save,
@@ -341,14 +341,14 @@ function JobFormPage() {
                   Salary range or budget
                 </label>
                 <div className="relative">
-                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-surface-400" />
+                  <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-surface-400" />
                   <input
                     type="text"
                     name="salary"
                     required
                     value={formData.salary}
                     onChange={handleChange}
-                    placeholder="e.g. $130,000 - $160,000"
+                    placeholder="e.g. ₹8 - ₹12 LPA"
                     className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-surface-200 text-xs text-surface-700 bg-surface-50/50 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-300 transition-all"
                   />
                 </div>

@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import {
   Search,
   MapPin,
-  DollarSign,
+  IndianRupee,
   TrendingUp,
   Users,
   Building,
@@ -22,39 +22,39 @@ function LandingPage() {
   const featuredJobs = [
     {
       id: 'job-1',
-      title: 'Senior Frontend Engineer (React)',
-      company: 'CloudFlare Inc.',
-      location: 'San Francisco, CA (Hybrid)',
-      salary: '$140k - $170k',
-      type: 'Full-time',
-      tags: ['React', 'TypeScript', 'Vite', 'Tailwind'],
+      title: 'AIML Intern',
+      company: 'HireFlow Solutions',
+      location: 'Bengaluru, Karnataka (On-site)',
+      salary: '₹3 - ₹5 LPA',
+      type: 'Internship',
+      tags: ['Python', 'ML', 'FastAPI'],
     },
     {
       id: 'job-2',
-      title: 'Backend Platform Engineer (Python)',
-      company: 'Stripe Solutions',
-      location: 'New York, NY (Remote)',
-      salary: '$150k - $185k',
+      title: 'Flutter Developer',
+      company: 'HireFlow Solutions',
+      location: 'Hyderabad, Telangana (On-site)',
+      salary: '₹8 - ₹14 LPA',
       type: 'Full-time',
-      tags: ['Python', 'FastAPI', 'PostgreSQL', 'Docker'],
+      tags: ['Flutter', 'Firebase', 'Dart'],
     },
     {
       id: 'job-3',
-      title: 'AI/ML Applied Scientist',
-      company: 'ScaleAI Labs',
-      location: 'Austin, TX (On-site)',
-      salary: '$160k - $210k',
+      title: 'GenAI Engineer',
+      company: 'HireFlow Solutions',
+      location: 'Pune, Maharashtra (Hybrid)',
+      salary: '₹15 - ₹25 LPA',
       type: 'Full-time',
-      tags: ['PyTorch', 'LLMs', 'NLP', 'VectorDBs'],
+      tags: ['LLM', 'RAG', 'Python'],
     },
     {
       id: 'job-4',
-      title: 'Lead Software Architect',
-      company: 'Vercel Group',
-      location: 'Remote (US/Global)',
-      salary: '$180k - $220k',
-      type: 'Contract',
-      tags: ['Next.js', 'Node.js', 'AWS', 'Kubernetes'],
+      title: 'Backend Developer',
+      company: 'HireFlow Solutions',
+      location: 'Noida, Uttar Pradesh (On-site)',
+      salary: '₹8 - ₹14 LPA',
+      type: 'Full-time',
+      tags: ['Python', 'FastAPI', 'MySQL'],
     },
   ]
 
@@ -304,7 +304,7 @@ function LandingPage() {
                       {job.location}
                     </span>
                     <span className="flex items-center gap-1">
-                      <DollarSign className="w-3.5 h-3.5 text-surface-400" />
+                      <IndianRupee className="w-3.5 h-3.5 text-surface-400" />
                       {job.salary}
                     </span>
                   </div>

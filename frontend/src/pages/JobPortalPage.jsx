@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import {
   Search,
   MapPin,
-  DollarSign,
+  IndianRupee,
   Star,
   ArrowLeft,
   X,

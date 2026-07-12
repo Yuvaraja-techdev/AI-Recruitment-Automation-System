@@ -148,65 +148,40 @@ models.Base.metadata.create_all(bind=engine)
 def seed_default_jobs():
     try:
         from database import SessionLocal
+        from jobs_data import JOBS_DATA
         db = SessionLocal()
         try:
-            # 1. Seed original 4 default positions if table is completely empty
-            job_count = db.query(models.Job).count()
-            if job_count == 0:
-                print("Seeding default tech jobs into the jobs table...")
-                default_jobs = [
-                    models.Job(
-                        title="Senior Frontend Engineer (React)",
-                        company="CloudFlare Inc.",
-                        location="San Francisco, CA (Hybrid)",
-                        experience="Senior",
-                        salary="$140k - $170k",
-                        description="We are seeking an experienced Frontend Developer to lead architectural decisions for our primary customer-facing dashboards. You will drive performance optimizations, bundle splitting, and modern state management patterns.",
-                        requirements="• 5+ years of experience building modern React web apps.\n• Expert level TypeScript, state stores (Zustand/Redux), and bundlers (Vite/Webpack).\n• Strong understanding of visual aesthetics and responsive CSS layouts.",
-                        skills=["React", "TypeScript", "Vite", "Tailwind", "Zustand"]
-                    ),
-                    models.Job(
-                        title="Backend Platform Engineer (Python)",
-                        company="Stripe Solutions",
-                        location="New York, NY (Remote)",
-                        experience="Mid",
-                        salary="$150k - $185k",
-                        description="Build resilient transactional processing services. Optimize ORM patterns, write robust schema migrations, and design highly secure APIs using Python and FastAPI.",
-                        requirements="• 3+ years of python web services experience (FastAPI/Django/Flask).\n• Strong database proficiency (PostgreSQL/MySQL/SQLite).\n• Passion for writing tested, cleanly documented modular APIs.",
-                        skills=["Python", "FastAPI", "PostgreSQL", "Docker", "REST"]
-                    ),
-                    models.Job(
-                        title="AI/ML Applied Scientist",
-                        company="ScaleAI Labs",
-                        location="Austin, TX (On-site)",
-                        experience="Senior",
-                        salary="$160k - $210k",
-                        description="Integrate large language models into commercial automated products. Build custom pipelines, index vectors, and write evaluators for prompt refinement engineering loops.",
-                        requirements="• 4+ years of data science or machine learning engineering.\n• Proficient in PyTorch, Hugging Face transformers, and vector search indexing.\n• Familiarity with fine-tuning open source model configurations.",
-                        skills=["PyTorch", "LLMs", "NLP", "VectorDBs", "LangChain"]
-                    ),
-                    models.Job(
-                        title="Lead Software Architect",
-                        company="Vercel Group",
-                        location="Remote (US/Global)",
-                        experience="Senior",
-                        salary="$180k - $220k",
-                        description="Design serverless frameworks, edge networking paths, and optimized code delivery pipelines. Mentor teams and align architectural patterns across globally distributed pods.",
-                        requirements="• 8+ years of full stack software engineering and cloud systems layout design.\n• Expert level Node.js, serverless platforms, edge runtimes, and cloud architecture (AWS).\n• Deep familiarity with Edge computing, CDNs, and caching policies.",
-                        skills=["Next.js", "Node.js", "AWS", "Kubernetes", "Edge"]
-                    )
-                ]
-                db.add_all(default_jobs)
+            # 1. Clean up jobs that are NOT in the allowed list of 97/98 jobs, or contain "$" in salary
+            allowed_titles = {job["role"] for job in JOBS_DATA}
+            jobs_to_delete = db.query(models.Job.id).filter(
+                (models.Job.title.notin_(allowed_titles)) | (models.Job.salary.like("%$%"))
+            ).all()
+            job_ids_to_delete = [j[0] for j in jobs_to_delete]
+            
+            if job_ids_to_delete:
+                db.query(models.Application).filter(models.Application.job_id.in_(job_ids_to_delete)).delete(synchronize_session=False)
+                db.query(models.SavedJob).filter(models.SavedJob.job_id.in_(job_ids_to_delete)).delete(synchronize_session=False)
+                db.query(models.Job).filter(models.Job.id.in_(job_ids_to_delete)).delete(synchronize_session=False)
                 db.commit()
-                print("Successfully seeded 4 default positions.")
-            
-            # 2. Seed 97 additional job roles from jobs_data.py
-            from jobs_data import JOBS_DATA
-            
+                print(f"Cleaned up {len(job_ids_to_delete)} default/stale jobs and their associations.")
+
+            # 2. Seed additional job roles from jobs_data.py
             existing_jobs = {j[0] for j in db.query(models.Job.title).all()}
             new_jobs = []
             
-            for job in JOBS_DATA:
+            indian_locations = [
+                "Bengaluru, Karnataka (On-site)",
+                "Hyderabad, Telangana (On-site)",
+                "Pune, Maharashtra (Hybrid)",
+                "Noida, Uttar Pradesh (On-site)",
+                "Chennai, Tamil Nadu (Hybrid)",
+                "Mumbai, Maharashtra (On-site)",
+                "Bengaluru, Karnataka (Hybrid)",
+                "Hyderabad, Telangana (Hybrid)",
+                "Remote (India)"
+            ]
+
+            for idx, job in enumerate(JOBS_DATA):
                 title = job["role"]
                 if title not in existing_jobs:
                     # Parse skills list
@@ -217,32 +192,35 @@ def seed_default_jobs():
                     if "intern" in title_lower or "trainee" in title_lower:
                         experience = "Entry"
                         emp_type = "Internship"
-                        salary = "$40k - $60k"
+                        salary = "₹3 - ₹5 LPA"
                     elif "senior" in title_lower or "lead" in title_lower or "architect" in title_lower:
                         experience = "Senior"
                         emp_type = "Full-time"
-                        salary = "$140k - $185k"
+                        salary = "₹15 - ₹25 LPA"
                     else:
                         experience = "Mid"
                         emp_type = "Full-time"
-                        salary = "$95k - $130k"
+                        salary = "₹8 - ₹14 LPA"
                         
                     # Create requirements template
                     skills_str = ", ".join(skills[:3])
                     reqs = f"• Professional experience working with {skills_str}.\n• Strong problem solving skills and software engineering practices.\n• Ability to collaborate effectively in cross-functional team workflows."
                     
+                    # Distribute Indian locations
+                    location = indian_locations[idx % len(indian_locations)]
+                    
                     new_jobs.append(
                         models.Job(
                             title=title,
                             company="HireFlow Solutions",
-                            location="Remote",
+                            location=location,
                             experience=experience,
                             salary=salary,
                             description=job["job_description"],
                             requirements=reqs,
                             skills=skills,
                             employment_type=emp_type,
-                            work_mode="Remote",
+                            work_mode="Remote" if "Remote" in location else "Office" if "On-site" in location else "Hybrid",
                             status="Published"
                         )
                     )
@@ -250,7 +228,7 @@ def seed_default_jobs():
             if new_jobs:
                 db.add_all(new_jobs)
                 db.commit()
-                print(f"Successfully seeded {len(new_jobs)} additional job roles.")
+                print(f"Successfully seeded {len(new_jobs)} additional job roles with Indian locations and INR currency.")
                 
         except Exception as e:
             print(f"Error seeding jobs: {e}")
