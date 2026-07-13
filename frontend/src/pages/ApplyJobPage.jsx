@@ -1144,25 +1144,25 @@ function ApplyJobPage() {
                       Assessment Scoring
                     </h4>
                     <div className="space-y-2.5">
-                      <div className="flex items-center justify-between p-3 rounded-2xl bg-emerald-50/50 border border-emerald-100/80 dark:bg-emerald-950/20 dark:border-emerald-900/50">
-                        <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300">Easy Questions</span>
-                        <span className="text-xs font-extrabold text-emerald-700 bg-emerald-100/60 px-2.5 py-0.5 rounded-full dark:bg-emerald-900/40 dark:text-emerald-200">5 Marks each</span>
+                      <div className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50/50 dark:bg-slate-900/40 border border-slate-150/50 dark:border-slate-800/60 border-l-4 border-l-emerald-500 shadow-sm hover:shadow-md transition-all">
+                        <span className="text-xs font-extrabold text-slate-700 dark:text-slate-200">Easy Questions</span>
+                        <span className="text-[10px] font-extrabold text-emerald-600 dark:text-emerald-450 bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-0.5 rounded-lg border border-emerald-100/30 dark:border-emerald-900/30">5 Marks each</span>
                       </div>
-                      <div className="flex items-center justify-between p-3 rounded-2xl bg-blue-50/50 border border-blue-100/80 dark:bg-blue-950/20 dark:border-blue-900/50">
-                        <span className="text-xs font-bold text-blue-800 dark:text-blue-300">Medium Questions</span>
-                        <span className="text-xs font-extrabold text-blue-700 bg-blue-100/60 px-2.5 py-0.5 rounded-full dark:bg-blue-900/40 dark:text-blue-200">10 Marks each</span>
+                      <div className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50/50 dark:bg-slate-900/40 border border-slate-150/50 dark:border-slate-800/60 border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-all">
+                        <span className="text-xs font-extrabold text-slate-700 dark:text-slate-200">Medium Questions</span>
+                        <span className="text-[10px] font-extrabold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 px-2.5 py-0.5 rounded-lg border border-blue-100/30 dark:border-blue-900/30">10 Marks each</span>
                       </div>
-                      <div className="flex items-center justify-between p-3 rounded-2xl bg-amber-50/50 border border-amber-100/80 dark:bg-amber-950/20 dark:border-amber-900/50">
-                        <span className="text-xs font-bold text-amber-800 dark:text-amber-300">Hard Questions</span>
-                        <span className="text-xs font-extrabold text-amber-700 bg-amber-100/60 px-2.5 py-0.5 rounded-full dark:bg-amber-900/40 dark:text-amber-205">15 Marks each</span>
+                      <div className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50/50 dark:bg-slate-900/40 border border-slate-150/50 dark:border-slate-800/60 border-l-4 border-l-amber-500 shadow-sm hover:shadow-md transition-all">
+                        <span className="text-xs font-extrabold text-slate-700 dark:text-slate-200">Hard Questions</span>
+                        <span className="text-[10px] font-extrabold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-2.5 py-0.5 rounded-lg border border-amber-100/30 dark:border-amber-900/30">15 Marks each</span>
                       </div>
-                      <div className="flex items-center justify-between p-3 rounded-2xl bg-purple-50/50 border border-purple-100/80 dark:bg-purple-950/20 dark:border-purple-900/50">
-                        <span className="text-xs font-bold text-purple-800 dark:text-purple-300">HR Questions</span>
-                        <span className="text-xs font-extrabold text-purple-700 bg-purple-100/60 px-2.5 py-0.5 rounded-full dark:bg-purple-900/40 dark:text-purple-200">10 Marks each</span>
+                      <div className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50/50 dark:bg-slate-900/40 border border-slate-150/50 dark:border-slate-800/60 border-l-4 border-l-purple-500 shadow-sm hover:shadow-md transition-all">
+                        <span className="text-xs font-extrabold text-slate-700 dark:text-slate-200">HR Questions</span>
+                        <span className="text-[10px] font-extrabold text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/40 px-2.5 py-0.5 rounded-lg border border-purple-100/30 dark:border-purple-900/30">10 Marks each</span>
                       </div>
-                      <div className="flex items-center justify-between p-3 rounded-2xl bg-indigo-50/50 border border-indigo-100/80 dark:bg-indigo-950/20 dark:border-indigo-900/50">
-                        <span className="text-xs font-bold text-indigo-800 dark:text-indigo-300">Scenario / Case Study</span>
-                        <span className="text-xs font-extrabold text-indigo-700 bg-indigo-100/60 px-2.5 py-0.5 rounded-full dark:bg-indigo-900/40 dark:text-indigo-200">15 Marks each</span>
+                      <div className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50/50 dark:bg-slate-900/40 border border-slate-150/50 dark:border-slate-800/60 border-l-4 border-l-indigo-500 shadow-sm hover:shadow-md transition-all">
+                        <span className="text-xs font-extrabold text-slate-700 dark:text-slate-200">Scenario / Case Study</span>
+                        <span className="text-[10px] font-extrabold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40 px-2.5 py-0.5 rounded-lg border border-indigo-100/30 dark:border-indigo-900/30">15 Marks each</span>
                       </div>
                     </div>
                   </div>
@@ -1175,16 +1175,16 @@ function ApplyJobPage() {
                         <Scale className="w-3.5 h-3.5 text-slate-400" />
                         Qualifying Criteria
                       </h4>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="flex flex-col items-center justify-center p-3 rounded-2xl bg-emerald-50 border border-emerald-100 dark:bg-emerald-950/20 dark:border-emerald-900/50 text-center">
-                          <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-450 mb-1" />
-                          <span className="text-xs font-black text-emerald-800 dark:text-emerald-300">PASS</span>
-                          <span className="text-[10px] font-bold text-emerald-650 dark:text-emerald-400">Minimum 60% or above</span>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="flex flex-col items-center justify-center p-4 rounded-2xl bg-slate-50/50 dark:bg-slate-900/40 border border-slate-150/50 dark:border-slate-800/60 border-t-4 border-t-emerald-500 text-center shadow-sm hover:shadow-md transition-all">
+                          <CheckCircle2 className="w-5.5 h-5.5 text-emerald-500 mb-1.5" />
+                          <span className="text-xs font-extrabold text-emerald-600 dark:text-emerald-400 tracking-wider uppercase">PASS</span>
+                          <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 mt-1">Minimum 60% or above</span>
                         </div>
-                        <div className="flex flex-col items-center justify-center p-3 rounded-2xl bg-rose-50 border border-rose-100 dark:bg-rose-950/20 dark:border-rose-900/50 text-center">
-                          <XCircle className="w-5 h-5 text-rose-500 dark:text-rose-400 mb-1" />
-                          <span className="text-xs font-black text-rose-800 dark:text-rose-300">FAIL</span>
-                          <span className="text-[10px] font-bold text-rose-650 dark:text-rose-450">Below 60%</span>
+                        <div className="flex flex-col items-center justify-center p-4 rounded-2xl bg-slate-50/50 dark:bg-slate-900/40 border border-slate-150/50 dark:border-slate-800/60 border-t-4 border-t-rose-500 text-center shadow-sm hover:shadow-md transition-all">
+                          <XCircle className="w-5.5 h-5.5 text-rose-500 mb-1.5" />
+                          <span className="text-xs font-extrabold text-rose-600 dark:text-rose-400 tracking-wider uppercase">FAIL</span>
+                          <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 mt-1">Below 60%</span>
                         </div>
                       </div>
                     </div>
@@ -1218,49 +1218,49 @@ function ApplyJobPage() {
                 </div>
 
                 {/* Evaluation Rules Section */}
-                <div className="border-t border-slate-100 pt-5 space-y-3.5">
+                <div className="border-t border-slate-150/40 dark:border-slate-800/80 pt-5 space-y-3.5">
                   <h4 className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
                     <Info className="w-3.5 h-3.5 text-slate-455" />
                     Evaluation Rules
                   </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-[10.5px] leading-relaxed text-slate-600 font-semibold">
-                    <div className="space-y-3">
-                      <div className="bg-slate-50/50 p-3 rounded-2xl border border-slate-100 dark:bg-slate-900/30">
-                        <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block mb-1">Multiple Choice Questions (MCQs)</span>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-[10.5px] leading-relaxed text-slate-650 dark:text-slate-400 font-semibold">
+                    <div className="space-y-4">
+                      <div className="bg-slate-50/50 dark:bg-slate-900/20 p-4 rounded-2xl border border-slate-150/50 dark:border-slate-800/50 border-l-4 border-l-brand-500 shadow-sm hover:shadow-md transition-all">
+                        <span className="text-xs font-extrabold text-slate-800 dark:text-slate-200 block mb-1">Multiple Choice Questions (MCQs)</span>
                         <span className="text-slate-500 dark:text-slate-400">MCQs require the exact correct answer.</span>
                       </div>
-                      <div className="bg-slate-50/50 p-3 rounded-2xl border border-slate-100 dark:bg-slate-900/30">
-                        <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block mb-1">Short Answers</span>
+                      <div className="bg-slate-50/50 dark:bg-slate-900/20 p-4 rounded-2xl border border-slate-150/50 dark:border-slate-800/50 border-l-4 border-l-brand-500 shadow-sm hover:shadow-md transition-all">
+                        <span className="text-xs font-extrabold text-slate-800 dark:text-slate-200 block mb-1">Short Answers</span>
                         <span className="text-slate-500 dark:text-slate-400">Short answers are evaluated for technical correctness.</span>
                       </div>
-                      <div className="bg-slate-50/50 p-3 rounded-2xl border border-slate-100 dark:bg-slate-900/30">
-                        <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block mb-1">Technical Descriptive Answers</span>
-                        <span className="text-slate-500 dark:text-slate-400 block mb-1">Technical descriptive answers are evaluated based on:</span>
-                        <div className="grid grid-cols-2 gap-1.5 pl-1 text-[10px] text-slate-550 dark:text-slate-400">
-                          <span className="flex items-center gap-1"><span className="w-1 h-1 rounded-full bg-slate-400 dark:bg-slate-500"></span> Technical Accuracy</span>
-                          <span className="flex items-center gap-1"><span className="w-1 h-1 rounded-full bg-slate-400 dark:bg-slate-500"></span> Completeness</span>
-                          <span className="flex items-center gap-1"><span className="w-1 h-1 rounded-full bg-slate-400 dark:bg-slate-500"></span> Practical Knowledge</span>
-                          <span className="flex items-center gap-1"><span className="w-1 h-1 rounded-full bg-slate-400 dark:bg-slate-500"></span> Relevance</span>
+                      <div className="bg-slate-50/50 dark:bg-slate-900/20 p-4 rounded-2xl border border-slate-150/50 dark:border-slate-800/50 border-l-4 border-l-brand-500 shadow-sm hover:shadow-md transition-all">
+                        <span className="text-xs font-extrabold text-slate-800 dark:text-slate-200 block mb-1">Technical Descriptive Answers</span>
+                        <span className="text-slate-500 dark:text-slate-400 block mb-2">Technical descriptive answers are evaluated based on:</span>
+                        <div className="grid grid-cols-2 gap-1.5 pl-1 text-[10px] text-slate-500 dark:text-slate-400">
+                          <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-brand-500"></span> Technical Accuracy</span>
+                          <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-brand-500"></span> Completeness</span>
+                          <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-brand-500"></span> Practical Knowledge</span>
+                          <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-brand-500"></span> Relevance</span>
                         </div>
                       </div>
                     </div>
-                    <div className="space-y-3">
-                      <div className="bg-slate-50/50 p-3 rounded-2xl border border-slate-100 dark:bg-slate-900/30 h-full flex flex-col justify-between">
+                    <div className="space-y-4">
+                      <div className="bg-slate-50/50 dark:bg-slate-900/20 p-4 rounded-2xl border border-slate-150/50 dark:border-slate-800/50 border-l-4 border-l-brand-500 shadow-sm hover:shadow-md transition-all h-full flex flex-col justify-between">
                         <div>
-                          <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block mb-1">HR & Behavioral Questions</span>
+                          <span className="text-xs font-extrabold text-slate-800 dark:text-slate-200 block mb-1">HR & Behavioral Questions</span>
                           <span className="text-slate-500 dark:text-slate-400 block mb-3">HR questions are evaluated using the STAR methodology.</span>
                         </div>
-                        <div className="border-t border-slate-100 dark:border-slate-800 my-2"></div>
+                        <div className="border-t border-slate-150/40 dark:border-slate-800/80 my-3"></div>
                         <div>
-                          <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block mb-1">Scenario / Case Study Questions</span>
+                          <span className="text-xs font-extrabold text-slate-800 dark:text-slate-200 block mb-1">Scenario / Case Study Questions</span>
                           <span className="text-slate-500 dark:text-slate-400 block mb-1.5">Scenario questions are evaluated based on:</span>
                           <div className="grid grid-cols-2 gap-y-1.5 gap-x-1 pl-1 text-[10px] text-slate-550 dark:text-slate-400">
-                            <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-indigo-400 dark:bg-indigo-500"></span> Architecture</span>
-                            <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-indigo-400 dark:bg-indigo-500"></span> Reasoning</span>
-                            <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-indigo-400 dark:bg-indigo-500"></span> Scalability</span>
-                            <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-indigo-400 dark:bg-indigo-500"></span> Tech Selection</span>
-                            <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-indigo-400 dark:bg-indigo-500"></span> Security</span>
-                            <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-indigo-400 dark:bg-indigo-500"></span> Prod Readiness</span>
+                            <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-brand-500"></span> Architecture</span>
+                            <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-brand-500"></span> Reasoning</span>
+                            <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-brand-500"></span> Scalability</span>
+                            <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-brand-500"></span> Tech Selection</span>
+                            <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-brand-500"></span> Security</span>
+                            <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-brand-500"></span> Prod Readiness</span>
                           </div>
                         </div>
                       </div>
